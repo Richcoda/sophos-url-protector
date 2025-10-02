@@ -1,0 +1,32 @@
+{
+  "16dd144c-b2fc-494e-a063-70633f0a23fe": {
+    "id": "16dd144c-b2fc-494e-a063-70633f0a23fe",
+    "originalURL": "https://google.com",
+    "timestamp": 1759363512434,
+    "expiresAt": 1761955512434,
+    "maxClicks": null,
+    "protectionMode": "m",
+    "clickCount": 1,
+    "isActive": true
+  },
+  "a8aad0ec-449a-4867-8a9f-0dc7abdb0d25": {
+    "id": "a8aad0ec-449a-4867-8a9f-0dc7abdb0d25",
+    "originalURL": "https://infinitesevernet.com",
+    "timestamp": 1759363650626,
+    "expiresAt": 1761955650626,
+    "maxClicks": null,
+    "protectionMode": "m",
+    "clickCount": 1,
+    "isActive": true
+  },
+  "dd2526f6-7f90-492b-a5ca-f2223c959832": {
+    "id": "dd2526f6-7f90-492b-a5ca-f2223c959832",
+    "originalURL": "https://google.com",
+    "timestamp": 1759363687773,
+    "expiresAt": 1761955687773,
+    "maxClicks": null,
+    "protectionMode": "m",
+    "clickCount": 1,
+    "isActive": true
+  }
+}

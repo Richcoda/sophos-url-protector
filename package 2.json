@@ -1,0 +1,19 @@
+cat > package.json << 'EOF'
+{
+  "name": "sophos-url-protector",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npx vercel dev",
+    "setup": "node -e \"console.log('SECRET_KEY=' + require('crypto').randomBytes(32).toString('hex'))\" > .env.local",
+    "deploy": "npx vercel --prod"
+  },
+  "dependencies": {
+    "@vercel/node": "^2.0.0",
+    "crypto-js": "^4.1.1",
+    "uuid": "^9.0.0",
+    "base64url": "^3.0.1",
+    "vercel": "^28.0.0"
+  }
+}
+EOF
