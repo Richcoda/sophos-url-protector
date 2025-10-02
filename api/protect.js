@@ -1,5 +1,5 @@
 import { SophosURLProtector } from '../lib/sophos-protector.js';
-import CryptoJS from 'crypto-js'; // ADD THIS IMPORT
+import CryptoJS from 'crypto-js';
 
 // Get secret key from environment with comprehensive validation
 const getSecretKey = () => {
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
 
   // Add request ID for tracking
   const requestId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-  console.log(`\n=== NEW REQUEST ${requestId} ===`);
+  console.log(`\n=== NEW PROTECT REQUEST ${requestId} ===`);
 
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -72,7 +72,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log(`📨 Processing request ${requestId}`);
+    console.log(`📨 Processing protect request ${requestId}`);
     
     // Parse request body
     let body;
@@ -166,8 +166,76 @@ export default async function handler(req, res) {
     console.log('🔒 Starting URL protection process...');
     const result = protector.protectURL(url, options);
     console.log('✅ URL protection completed successfully');
-    
+
+    // DEBUG: Analyze the generated protected URL
+    console.log('🔍 Generated Protected URL Analysis:');
+    try {
+      const protectedURL = new URL(result.protectedURL);
+      const params = protectedURL.searchParams;
+      
+      console.log('📊 URL Parameter Analysis:');
+      console.log('   - u (encryptedData):', params.get('u')?.length, 'chars');
+      console.log('   - t (securityToken):', params.get('t')?.length, 'chars');
+      console.log('   - s (signature):', params.get('s')?.length, 'chars');
+      console.log('   - i (urlId):', params.get('i')?.length, 'chars');
+      console.log('   - h (hash):', params.get('h')?.length, 'chars');
+      console.log('   - p (protection):', params.get('p'));
+      console.log('   - d (domain):', params.get('d'));
+      
+      // Log the actual parameter values (truncated for security)
+      console.log('📄 Parameter Samples (first 50 chars):');
+      console.log('   - u sample:', params.get('u')?.substring(0, 50) + '...');
+      console.log('   - t sample:', params.get('t')?.substring(0, 50) + '...');
+      console.log('   - s sample:', params.get('s')?.substring(0, 50) + '...');
+      
+    } catch (urlError) {
+      console.error('❌ Error analyzing protected URL:', urlError.message);
+    }
+
+    // Test the protected URL immediately to catch issues early
+    console.log('🧪 Testing protected URL structure...');
+    try {
+      const testURL = new URL(result.protectedURL);
+      const testParams = testURL.searchParams;
+      
+      // Verify all required parameters are present
+      const requiredParams = ['d', 'u', 'p', 'i', 't', 'h', 's'];
+      const missingParams = requiredParams.filter(param => !testParams.get(param));
+      
+      if (missingParams.length > 0) {
+        console.error('❌ Missing parameters in protected URL:', missingParams);
+      } else {
+        console.log('✅ All required parameters present in protected URL');
+      }
+      
+      // Verify parameter lengths are reasonable
+      const paramLengths = {
+        u: testParams.get('u')?.length,
+        t: testParams.get('t')?.length,
+        s: testParams.get('s')?.length,
+        i: testParams.get('i')?.length,
+        h: testParams.get('h')?.length
+      };
+      
+      console.log('📏 Parameter lengths:', paramLengths);
+      
+      // Check for suspiciously short parameters
+      Object.entries(paramLengths).forEach(([param, length]) => {
+        if (length < 10) {
+          console.warn(`⚠️  Parameter ${param} is very short: ${length} chars`);
+        }
+      });
+      
+    } catch (testError) {
+      console.error('❌ Protected URL test failed:', testError.message);
+    }
+
     console.log(`🎉 Request ${requestId} completed successfully`);
+    console.log('📤 Response data:');
+    console.log('   - protectedURL length:', result.protectedURL.length);
+    console.log('   - urlId:', result.urlId);
+    console.log('   - protectionMode:', result.protectionMode);
+    console.log('   - expiresAt:', result.expiresAt);
     
     res.status(200).json({
       success: true,
@@ -192,6 +260,6 @@ export default async function handler(req, res) {
       requestId: requestId
     });
   } finally {
-    console.log(`=== END REQUEST ${requestId} ===\n`);
+    console.log(`=== END PROTECT REQUEST ${requestId} ===\n`);
   }
 }
