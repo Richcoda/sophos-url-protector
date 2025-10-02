@@ -1,10 +1,9 @@
 import { SophosURLProtector } from '../lib/sophos-protector.js';
 
-// Get secret key from environment with proper error handling
 const getSecretKey = () => {
   const secretKey = process.env.SECRET_KEY;
   if (!secretKey) {
-    throw new Error('SECRET_KEY environment variable is not configured. Please set it in Vercel environment variables.');
+    throw new Error('SECRET_KEY environment variable is not configured');
   }
   return secretKey;
 };
@@ -17,7 +16,6 @@ export default async function handler(req, res) {
   try {
     const { d, u, p, i, t, h, s } = req.query;
     
-    // Validate required parameters
     if (!d || !u || !p || !i || !t || !h || !s) {
       return res.status(400).send(`
         <!DOCTYPE html>
@@ -90,7 +88,6 @@ export default async function handler(req, res) {
       d, u, p, i, t, h, s
     });
 
-    // Redirect to the original URL
     res.redirect(302, result.originalURL);
 
   } catch (error) {

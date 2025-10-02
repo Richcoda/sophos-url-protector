@@ -1,10 +1,9 @@
 import { SophosURLProtector } from '../lib/sophos-protector.js';
 
-// Get secret key from environment with proper error handling
 const getSecretKey = () => {
   const secretKey = process.env.SECRET_KEY;
   if (!secretKey) {
-    throw new Error('SECRET_KEY environment variable is not configured. Please set it in Vercel environment variables.');
+    throw new Error('SECRET_KEY environment variable is not configured');
   }
   return secretKey;
 };

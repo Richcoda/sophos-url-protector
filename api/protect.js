@@ -1,22 +1,19 @@
 import { SophosURLProtector } from '../lib/sophos-protector.js';
 
-// Get secret key from environment with proper error handling
 const getSecretKey = () => {
   const secretKey = process.env.SECRET_KEY;
   if (!secretKey) {
-    throw new Error('SECRET_KEY environment variable is not configured. Please set it in Vercel environment variables.');
+    throw new Error('SECRET_KEY environment variable is not configured');
   }
   return secretKey;
 };
 
 export default async function handler(req, res) {
-  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Content-Type', 'application/json');
 
-  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -31,7 +28,6 @@ export default async function handler(req, res) {
   try {
     const { url, expiresIn = 720, maxClicks, protectionMode = 'm' } = req.body;
 
-    // Validate required fields
     if (!url) {
       return res.status(400).json({ 
         success: false, 
@@ -39,7 +35,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Validate URL format
     try {
       new URL(url);
     } catch (error) {
@@ -49,10 +44,8 @@ export default async function handler(req, res) {
       });
     }
 
-    // Initialize protector with secret key
     const protector = new SophosURLProtector(getSecretKey());
 
-    // Validate and parse options
     const hours = parseInt(expiresIn);
     if (isNaN(hours) || hours < 1) {
       return res.status(400).json({ 
@@ -84,7 +77,6 @@ export default async function handler(req, res) {
       options.maxClicks = clicks;
     }
 
-    // Protect the URL
     const result = protector.protectURL(url, options);
     
     res.status(200).json({
