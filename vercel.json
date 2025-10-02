@@ -17,11 +17,7 @@
     },
     {
       "src": "/api/(.*)",
-      "dest": "/api/$1.js"
+      "dest": "/api/$1"
     }
-  ],
-  "env": {
-    "NODE_ENV": "production",
-    "SECRET_KEY": "@secret-key"
-  }
+  ]
 }
