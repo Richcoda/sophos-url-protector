@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/*.js",
+      "src": "api/**/*.js",
       "use": "@vercel/node"
     },
     {
@@ -17,7 +17,11 @@
     },
     {
       "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "dest": "/api/$1.js"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "SECRET_KEY": "@secret-key"
+  }
 }

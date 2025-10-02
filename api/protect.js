@@ -1,92 +1,32 @@
+import { config } from '../lib/config.js';
 import { SophosURLProtector } from '../lib/sophos-protector.js';
 
-// Get secret key from environment with fallback for development
-const getSecretKey = () => {
-  const secretKey = process.env.SECRET_KEY;
-  if (!secretKey) {
-    console.warn('SECRET_KEY not set, using development key');
-    return 'development-secret-key-change-in-production';
-  }
-  return secretKey;
-};
-
 export default async function handler(req, res) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Content-Type', 'application/json');
-
-  // Handle CORS preflight
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ 
-      success: false, 
-      error: 'Method not allowed. Use POST.' 
-    });
-  }
-
+  
   try {
+    console.log('🔑 Using secret key:', config.secretKey.substring(0, 10) + '...');
+    
     const { url, expiresIn = 720, maxClicks, protectionMode = 'm' } = req.body;
 
-    // Validate required fields
     if (!url) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'URL is required' 
-      });
+      return res.status(400).json({ error: 'URL is required' });
     }
 
-    // Validate URL format
-    try {
-      new URL(url);
-    } catch (error) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Invalid URL format' 
-      });
-    }
-
-    // Initialize protector
-    const protector = new SophosURLProtector(getSecretKey());
-
-    // Validate and parse options
-    const hours = parseInt(expiresIn);
-    if (isNaN(hours) || hours < 1) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Invalid expiration time' 
-      });
-    }
-
-    if (hours > 24 * 365) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Maximum expiration time is 1 year' 
-      });
-    }
+    const protector = new SophosURLProtector(config.secretKey, config.domain);
 
     const options = {
-      expiresIn: hours * 60 * 60 * 1000,
+      expiresIn: parseInt(expiresIn) * 60 * 60 * 1000,
       protectionMode
     };
     
     if (maxClicks) {
-      const clicks = parseInt(maxClicks);
-      if (isNaN(clicks) || clicks < 1) {
-        return res.status(400).json({ 
-          success: false, 
-          error: 'Invalid max clicks value' 
-        });
-      }
-      options.maxClicks = clicks;
+      options.maxClicks = parseInt(maxClicks);
     }
 
-    // Protect the URL
     const result = protector.protectURL(url, options);
+    
+    console.log('✅ URL protected:', result.urlId);
     
     res.status(200).json({
       success: true,
@@ -98,7 +38,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Protection error:', error);
+    console.error('❌ Protection error:', error);
     res.status(500).json({ 
       success: false, 
       error: error.message 
