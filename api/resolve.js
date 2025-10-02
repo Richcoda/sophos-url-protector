@@ -3,21 +3,55 @@ import CryptoJS from 'crypto-js';
 
 const getSecretKey = () => {
   const secretKey = process.env.SECRET_KEY;
+  
+  console.log('🔑 Resolve - SECRET_KEY validation:');
+  console.log('   - Available:', !!secretKey);
+  console.log('   - Length:', secretKey ? secretKey.length : 0);
+  
   if (!secretKey) {
     throw new Error('SECRET_KEY environment variable is not configured');
   }
+  
   return secretKey;
 };
 
 export default async function handler(req, res) {
+  // Add request ID for tracking
+  const requestId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+  console.log(`\n=== RESOLVE REQUEST ${requestId} ===`);
+
   if (req.method !== 'GET') {
+    console.log(`❌ Invalid method for resolve request ${requestId}:`, req.method);
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { d, u, p, i, t, h, s } = req.query;
+    console.log(`📨 Processing resolve request ${requestId}`);
     
+    const { d, u, p, i, t, h, s } = req.query;
+
+    console.log('📋 Query parameters received:');
+    console.log('   d:', d);
+    console.log('   u length:', u?.length);
+    console.log('   p:', p);
+    console.log('   i length:', i?.length);
+    console.log('   t length:', t?.length);
+    console.log('   h length:', h?.length);
+    console.log('   s length:', s?.length);
+
+    // Validate required parameters
     if (!d || !u || !p || !i || !t || !h || !s) {
+      const missing = [];
+      if (!d) missing.push('d');
+      if (!u) missing.push('u');
+      if (!p) missing.push('p');
+      if (!i) missing.push('i');
+      if (!t) missing.push('t');
+      if (!h) missing.push('h');
+      if (!s) missing.push('s');
+      
+      console.error(`❌ Missing parameters in request ${requestId}:`, missing);
+      
       return res.status(400).send(`
         <!DOCTYPE html>
         <html>
@@ -75,7 +109,7 @@ export default async function handler(req, res) {
         <body>
           <div class="error-card">
             <h1>🔒 Invalid Protected URL</h1>
-            <p>The URL is missing required security parameters or has been tampered with.</p>
+            <p>The URL is missing required security parameters: ${missing.join(', ')}</p>
             <a href="/">🛡️ Create New Protected URL</a>
           </div>
         </body>
@@ -83,16 +117,26 @@ export default async function handler(req, res) {
       `);
     }
 
+    console.log('🛡️ Initializing URL protector for resolution...');
     const protector = new SophosURLProtector(getSecretKey());
+    console.log('✅ URL protector initialized');
 
     const result = await protector.resolveProtectedURL({
       d, u, p, i, t, h, s
     });
 
+    console.log(`✅ Resolve request ${requestId} completed successfully`);
+    console.log('   Redirecting to:', result.originalURL);
+
+    // Redirect to the original URL
     res.redirect(302, result.originalURL);
 
   } catch (error) {
-    console.error('Resolution error:', error.message);
+    console.error(`❌ Resolve request ${requestId} failed:`, {
+      message: error.message,
+      stack: error.stack,
+      queryParams: Object.keys(req.query)
+    });
     
     res.status(400).send(`
       <!DOCTYPE html>
@@ -171,6 +215,7 @@ export default async function handler(req, res) {
               <li>🔸 Security threat detected</li>
               <li>🔸 Invalid or tampered URL</li>
               <li>🔸 Protection rules violation</li>
+              <li>🔸 Signature verification failed</li>
             </ul>
           </div>
           <a href="/">🛡️ Create New Protected URL</a>
@@ -178,5 +223,7 @@ export default async function handler(req, res) {
       </body>
       </html>
     `);
+  } finally {
+    console.log(`=== END RESOLVE REQUEST ${requestId} ===\n`);
   }
 }
