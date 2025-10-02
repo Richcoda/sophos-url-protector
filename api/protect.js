@@ -1,5 +1,5 @@
-import { config } from '../lib/config.js';
-import { SophosURLProtector } from '../lib/sophos-protector.js';
+import { SophosURLProtector } from './lib/sophos-protector.js';
+import { config } from './lib/config.js';
 
 export default async function handler(req, res) {
   // Set JSON header immediately
