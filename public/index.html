@@ -6,11 +6,10 @@
     <title>Sophos-Style URL Protector</title>
     <style>
         :root {
-            --sophos-blue: #0C7ABF;
-            --sophos-dark: #1A2B3C;
-            --sophos-light: #E8F4FD;
+            --primary: #0C7ABF;
+            --dark: #1A2B3C;
+            --light: #E8F4FD;
             --success: #28a745;
-            --warning: #ffc107;
             --danger: #dc3545;
         }
         
@@ -22,7 +21,7 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--sophos-blue) 0%, var(--sophos-dark) 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
             min-height: 100vh;
             padding: 20px;
             color: #333;
@@ -38,28 +37,20 @@
         }
         
         .header {
-            background: var(--sophos-dark);
+            background: var(--dark);
             color: white;
-            padding: 30px;
+            padding: 40px;
             text-align: center;
-            position: relative;
-        }
-        
-        .header::before {
-            content: '🛡️';
-            font-size: 3rem;
-            display: block;
-            margin-bottom: 15px;
         }
         
         .header h1 {
             font-size: 2.5rem;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             font-weight: 300;
         }
         
         .header p {
-            opacity: 0.8;
+            opacity: 0.9;
             font-size: 1.1rem;
         }
         
@@ -75,7 +66,7 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: var(--sophos-dark);
+            color: var(--dark);
         }
         
         input, select {
@@ -89,21 +80,21 @@
         
         input:focus, select:focus {
             outline: none;
-            border-color: var(--sophos-blue);
+            border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(12, 122, 191, 0.1);
         }
         
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 20px;
         }
         
         button {
-            background: var(--sophos-blue);
+            background: var(--primary);
             color: white;
             border: none;
-            padding: 15px 30px;
+            padding: 16px 32px;
             border-radius: 8px;
             font-size: 16px;
             font-weight: 600;
@@ -115,15 +106,14 @@
         button:hover {
             background: #0A6BA8;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(12, 122, 191, 0.3);
         }
         
         .result {
             margin-top: 30px;
             padding: 25px;
-            background: var(--sophos-light);
+            background: var(--light);
             border-radius: 10px;
-            border-left: 4px solid var(--sophos-blue);
+            border-left: 4px solid var(--primary);
             display: none;
         }
         
@@ -151,8 +141,8 @@
         .btn-group {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 15px;
+            margin-top: 20px;
         }
         
         .btn-copy {
@@ -164,7 +154,7 @@
         }
         
         .btn-analytics {
-            background: var(--sophos-dark);
+            background: var(--dark);
         }
         
         .btn-analytics:hover {
@@ -175,50 +165,8 @@
             margin-top: 20px;
             padding: 20px;
             background: #E8F4FD;
-            border-radius: 10px;
-            border-left: 4px solid var(--sophos-blue);
+            border-radius: 8px;
             display: none;
-        }
-        
-        .feature-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px solid #e9ecef;
-        }
-        
-        .feature {
-            text-align: center;
-            padding: 20px;
-            background: var(--sophos-light);
-            border-radius: 8px;
-            transition: transform 0.3s;
-        }
-        
-        .feature:hover {
-            transform: translateY(-5px);
-        }
-        
-        .feature-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            display: block;
-        }
-        
-        .disclaimer {
-            background: #FFF3CD;
-            border: 1px solid #FFEAA7;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 30px;
-            font-size: 14px;
-        }
-        
-        .disclaimer h3 {
-            color: #856404;
-            margin-bottom: 10px;
         }
         
         @media (max-width: 768px) {
@@ -243,8 +191,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Sophos-Style URL Protector</h1>
-            <p>Enterprise-grade URL protection with Sophos-style security parameters</p>
+            <h1>🔗 Sophos-Style URL Protector</h1>
+            <p>Secure your links with enterprise-grade protection</p>
         </div>
         
         <div class="content">
@@ -257,7 +205,6 @@
                 <div class="form-group">
                     <label for="expiresIn">Expires After (hours):</label>
                     <input type="number" id="expiresIn" placeholder="720" min="1" max="8760" value="720">
-                    <small>Default: 720 hours (30 days). Max: 8760 hours (1 year)</small>
                 </div>
                 
                 <div class="form-group">
@@ -269,45 +216,16 @@
             <div class="form-group">
                 <label for="protectionMode">Protection Level:</label>
                 <select id="protectionMode">
-                    <option value="m">🛡️ Medium Protection (Recommended)</option>
-                    <option value="l">🟢 Low Protection (Basic)</option>
-                    <option value="h">🔴 High Protection (Enhanced)</option>
+                    <option value="m">🛡️ Medium Protection</option>
+                    <option value="l">🟢 Low Protection</option>
+                    <option value="h">🔴 High Protection</option>
                 </select>
             </div>
             
-            <button onclick="protectURL()">🛡️ Protect URL with Sophos Security</button>
+            <button onclick="protectURL()">🛡️ Protect URL</button>
             
             <div id="result"></div>
             <div id="analytics"></div>
-            
-            <div class="feature-list">
-                <div class="feature">
-                    <span class="feature-icon">🔐</span>
-                    <h3>Sophos Encryption</h3>
-                    <p>Military-grade AES-256 encryption</p>
-                </div>
-                <div class="feature">
-                    <span class="feature-icon">⏰</span>
-                    <h3>Auto-Expiration</h3>
-                    <p>Set expiration from 1 hour to 1 year</p>
-                </div>
-                <div class="feature">
-                    <span class="feature-icon">👆</span>
-                    <h3>Click Limits</h3>
-                    <p>Control maximum number of clicks</p>
-                </div>
-                <div class="feature">
-                    <span class="feature-icon">📊</span>
-                    <h3>Advanced Analytics</h3>
-                    <p>Track clicks and performance</p>
-                </div>
-            </div>
-            
-            <div class="disclaimer">
-                <h3>🔒 Security Notice</h3>
-                <p>This service provides URL encryption and access control using Sophos-style security parameters. 
-                For enterprise-grade threat protection, consider using official Sophos services.</p>
-            </div>
         </div>
     </div>
 
@@ -345,6 +263,13 @@
                     })
                 });
                 
+                // Handle response
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    throw new Error(`Server returned: ${response.status} - ${text.substring(0, 100)}`);
+                }
+                
                 const data = await response.json();
                 
                 if (data.success) {
@@ -361,15 +286,15 @@
             const resultDiv = document.getElementById('result');
             resultDiv.className = 'result success';
             resultDiv.innerHTML = `
-                <h3>✅ URL Protected with Sophos Security!</h3>
-                <p><strong>Protected URL (Sophos-style):</strong></p>
+                <h3>✅ URL Protected Successfully!</h3>
+                <p><strong>Protected URL:</strong></p>
                 <div class="url-display">
                     <a href="${data.protectedURL}" target="_blank">${data.protectedURL}</a>
                 </div>
                 <p><strong>Expires:</strong> ${new Date(data.expiresAt).toLocaleString()}</p>
                 <p><strong>Protection Level:</strong> ${getProtectionLevelName(data.protectionMode)}</p>
                 <div class="btn-group">
-                    <button class="btn-copy" onclick="copyToClipboard('${data.protectedURL}')">📋 Copy Sophos URL</button>
+                    <button class="btn-copy" onclick="copyToClipboard('${data.protectedURL}')">📋 Copy URL</button>
                     <button class="btn-analytics" onclick="viewAnalytics('${data.urlId}')">📊 View Analytics</button>
                 </div>
             `;
@@ -395,7 +320,7 @@
         
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
-                alert('✅ Sophos URL copied to clipboard!');
+                alert('✅ URL copied to clipboard!');
             });
         }
         
@@ -409,7 +334,7 @@
                 if (data.success) {
                     const a = data.analytics;
                     analyticsDiv.innerHTML = `
-                        <h3>📊 Sophos URL Analytics</h3>
+                        <h3>📊 URL Analytics</h3>
                         <p><strong>Original URL:</strong> ${a.originalURL}</p>
                         <p><strong>Created:</strong> ${new Date(a.created).toLocaleString()}</p>
                         <p><strong>Expires:</strong> ${new Date(a.expires).toLocaleString()}</p>
@@ -426,13 +351,6 @@
                 alert('Error loading analytics: ' + error.message);
             }
         }
-        
-        // Allow form submission with Enter key
-        document.getElementById('url').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                protectURL();
-            }
-        });
     </script>
 </body>
 </html>

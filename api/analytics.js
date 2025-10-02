@@ -1,10 +1,19 @@
-import { SophosURLProtector } from './lib/sophos-protector.js';
-import { config } from './lib/config.js';
+import { SophosURLProtector } from '../lib/sophos-protector.js';
+
+// Get secret key from environment with fallback for development
+const getSecretKey = () => {
+  const secretKey = process.env.SECRET_KEY;
+  if (!secretKey) {
+    return 'development-secret-key-change-in-production';
+  }
+  return secretKey;
+};
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Content-Type', 'application/json');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -21,7 +30,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'URL ID is required' });
     }
 
-    const protector = new SophosURLProtector(config.secretKey, config.domain);
+    const protector = new SophosURLProtector(getSecretKey());
     const analytics = protector.getURLAnalytics(id);
     
     res.status(200).json({
@@ -59,5 +68,8 @@ function getTimeRemaining(expires) {
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   
-  return `${days}d ${hours}h remaining`;
+  if (days > 0) {
+    return `${days} day${days > 1 ? 's' : ''} ${hours} hour${hours > 1 ? 's' : ''} remaining`;
+  }
+  return `${hours} hour${hours > 1 ? 's' : ''} remaining`;
 }
