@@ -1,23 +1,19 @@
+import { config } from '../lib/config.js';
 import { SophosURLProtector } from '../lib/sophos-protector.js';
 
-const getSecretKey = () => {
-  const secretKey = process.env.SECRET_KEY;
-  if (!secretKey) {
-    throw new Error('SECRET_KEY environment variable is not configured');
-  }
-  return secretKey;
-};
-
 export default async function handler(req, res) {
+  // Set JSON header immediately
+  res.setHeader('Content-Type', 'application/json');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Content-Type', 'application/json');
 
+  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
+  // Only allow POST
   if (req.method !== 'POST') {
     return res.status(405).json({ 
       success: false, 
@@ -26,8 +22,22 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { url, expiresIn = 720, maxClicks, protectionMode = 'm' } = req.body;
+    console.log('📨 Received protect request on Vercel');
+    
+    // Parse JSON body
+    let body;
+    try {
+      body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    } catch (parseError) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Invalid JSON in request body' 
+      });
+    }
 
+    const { url, expiresIn = 720, maxClicks, protectionMode = 'm' } = body;
+
+    // Validate required fields
     if (!url) {
       return res.status(400).json({ 
         success: false, 
@@ -35,6 +45,7 @@ export default async function handler(req, res) {
       });
     }
 
+    // Validate URL format
     try {
       new URL(url);
     } catch (error) {
@@ -44,20 +55,15 @@ export default async function handler(req, res) {
       });
     }
 
-    const protector = new SophosURLProtector(getSecretKey());
+    console.log('🔑 Using secret key on Vercel');
+    const protector = new SophosURLProtector(config.secretKey, config.domain);
 
+    // Validate expiration time
     const hours = parseInt(expiresIn);
-    if (isNaN(hours) || hours < 1) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Invalid expiration time' 
-      });
-    }
-
     if (hours > 24 * 365) {
       return res.status(400).json({ 
         success: false, 
-        error: 'Maximum expiration time is 1 year' 
+        error: 'Maximum expiration time is 1 year (8760 hours)' 
       });
     }
 
@@ -67,17 +73,12 @@ export default async function handler(req, res) {
     };
     
     if (maxClicks) {
-      const clicks = parseInt(maxClicks);
-      if (isNaN(clicks) || clicks < 1) {
-        return res.status(400).json({ 
-          success: false, 
-          error: 'Invalid max clicks value' 
-        });
-      }
-      options.maxClicks = clicks;
+      options.maxClicks = parseInt(maxClicks);
     }
 
     const result = protector.protectURL(url, options);
+    
+    console.log('✅ URL protected on Vercel:', result.urlId);
     
     res.status(200).json({
       success: true,
@@ -85,14 +86,16 @@ export default async function handler(req, res) {
       urlId: result.urlId,
       expiresAt: result.expiresAt,
       protectionMode: result.protectionMode,
-      analytics: result.analytics
+      analytics: result.analytics,
+      environment: 'vercel'
     });
 
   } catch (error) {
-    console.error('Protection error:', error);
+    console.error('❌ Vercel protection error:', error);
     res.status(500).json({ 
       success: false, 
-      error: error.message 
+      error: error.message,
+      type: 'server_error'
     });
   }
 }

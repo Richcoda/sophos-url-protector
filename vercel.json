@@ -1,23 +1,35 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
+  "functions": {
+    "api/protect.js": {
+      "maxDuration": 10
     },
-    {
-      "src": "public/**/*",
-      "use": "@vercel/static"
+    "api/resolve.js": {
+      "maxDuration": 10
+    },
+    "api/analytics.js": {
+      "maxDuration": 10
     }
-  ],
+  },
   "routes": [
     {
-      "src": "/",
-      "dest": "/public/index.html"
+      "src": "/api/protect",
+      "dest": "/api/protect.js",
+      "methods": ["POST", "OPTIONS"]
     },
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "src": "/api/resolve",
+      "dest": "/api/resolve.js",
+      "methods": ["GET"]
+    },
+    {
+      "src": "/api/analytics",
+      "dest": "/api/analytics.js",
+      "methods": ["GET"]
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/public/$1"
     }
   ]
 }
