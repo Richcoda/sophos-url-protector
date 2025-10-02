@@ -9,16 +9,6 @@ const getSecretKey = () => {
   return secretKey;
 };
 
-// Get dynamic base URL from request
-const getDynamicBaseURL = (req) => {
-  const host = req.headers['x-forwarded-host'] || req.headers['host'];
-  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-  const baseURL = `${protocol}://${host}`;
-  
-  console.log('🌐 Analytics - Dynamic base URL:', baseURL);
-  return baseURL;
-};
-
 export default async function handler(req, res) {
   // Add request ID for tracking
   const requestId = Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -51,9 +41,6 @@ export default async function handler(req, res) {
 
     const protector = new SophosURLProtector(getSecretKey());
     
-    // Override base URL with dynamic detection
-    protector.baseURL = getDynamicBaseURL(req);
-    
     console.log('🛡️ Getting URL analytics...');
     const analytics = protector.getURLAnalytics(id);
     
@@ -67,8 +54,9 @@ export default async function handler(req, res) {
       timeRemaining: getTimeRemaining(analytics.expires),
       status: getURLStatus(analytics),
       createdFromNow: getTimeFromNow(analytics.created),
-      isActive: analytics.isActive !== false, // Default to true if not specified
-      isExpired: analytics.isExpired || false
+      isActive: analytics.isActive !== false,
+      isExpired: analytics.isExpired || false,
+      note: 'Analytics are limited without persistent storage. Consider adding Vercel KV for full functionality.'
     };
 
     res.status(200).json({

@@ -15,24 +15,10 @@ const getSecretKey = () => {
   return secretKey;
 };
 
-// Get dynamic base URL from request
-const getDynamicBaseURL = (req) => {
-  const host = req.headers['x-forwarded-host'] || req.headers['host'];
-  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-  const baseURL = `${protocol}://${host}`;
-  
-  console.log('🌐 Dynamic base URL detection:');
-  console.log('   - Host:', host);
-  console.log('   - Protocol:', protocol);
-  console.log('   - Base URL:', baseURL);
-  
-  return baseURL;
-};
-
 export default async function handler(req, res) {
   // Add request ID for tracking
   const requestId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-  console.log(`\n=== RESOLVE REQUEST ${requestId} ===`);
+  console.log(`\n=== RESOLUTION DOMAIN - REQUEST ${requestId} ===`);
 
   if (req.method !== 'GET') {
     console.log(`❌ Invalid method for resolve request ${requestId}:`, req.method);
@@ -41,6 +27,7 @@ export default async function handler(req, res) {
 
   try {
     console.log(`📨 Processing resolve request ${requestId}`);
+    console.log('🌐 This is the RESOLUTION DOMAIN');
     
     const { d, u, p, i, t, h, s } = req.query;
 
@@ -70,7 +57,7 @@ export default async function handler(req, res) {
         <!DOCTYPE html>
         <html>
         <head>
-          <title>Sophos URL Protector - Error</title>
+          <title>Secure Link - Error</title>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1">
           <style>
@@ -105,26 +92,13 @@ export default async function handler(req, res) {
               margin-bottom: 25px;
               line-height: 1.6;
             }
-            a { 
-              display: inline-block;
-              background: #007bff;
-              color: white;
-              padding: 12px 30px;
-              border-radius: 8px;
-              text-decoration: none;
-              font-weight: 600;
-              transition: background 0.3s;
-            }
-            a:hover {
-              background: #0056b3;
-            }
           </style>
         </head>
         <body>
           <div class="error-card">
-            <h1>🔒 Invalid Protected URL</h1>
-            <p>The URL is missing required security parameters: ${missing.join(', ')}</p>
-            <a href="/">🛡️ Create New Protected URL</a>
+            <h1>🔒 Invalid Secure Link</h1>
+            <p>The secure link is missing required security parameters.</p>
+            <p><small>Error: Missing ${missing.join(', ')}</small></p>
           </div>
         </body>
         </html>
@@ -133,10 +107,7 @@ export default async function handler(req, res) {
 
     console.log('🛡️ Initializing URL protector for resolution...');
     const protector = new SophosURLProtector(getSecretKey());
-    
-    // Override base URL with dynamic detection for analytics links
-    protector.baseURL = getDynamicBaseURL(req);
-    console.log('✅ URL protector initialized with base URL:', protector.baseURL);
+    console.log('✅ URL protector initialized on resolution domain');
 
     const result = await protector.resolveProtectedURL({
       d, u, p, i, t, h, s
@@ -159,7 +130,7 @@ export default async function handler(req, res) {
       <!DOCTYPE html>
       <html>
       <head>
-        <title>Sophos URL Protector - Access Denied</title>
+        <title>Secure Link - Access Denied</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
@@ -205,42 +176,28 @@ export default async function handler(req, res) {
             margin-bottom: 8px;
             line-height: 1.5;
           }
-          a { 
-            display: inline-block;
-            background: #28a745;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background 0.3s;
-          }
-          a:hover {
-            background: #218838;
-          }
         </style>
       </head>
       <body>
         <div class="error-card">
-          <h1>🚫 URL Access Denied</h1>
+          <h1>🚫 Secure Link Access Denied</h1>
           <p><strong>${error.message}</strong></p>
           <div class="reasons">
             <p>Possible reasons:</p>
             <ul>
-              <li>🔸 URL has expired</li>
+              <li>🔸 Link has expired</li>
               <li>🔸 Maximum clicks reached</li>
               <li>🔸 Security threat detected</li>
-              <li>🔸 Invalid or tampered URL</li>
+              <li>🔸 Invalid or tampered link</li>
               <li>🔸 Protection rules violation</li>
               <li>🔸 Signature verification failed</li>
             </ul>
           </div>
-          <a href="/">🛡️ Create New Protected URL</a>
         </div>
       </body>
       </html>
     `);
   } finally {
-    console.log(`=== END RESOLVE REQUEST ${requestId} ===\n`);
+    console.log(`=== END RESOLUTION REQUEST ${requestId} ===\n`);
   }
 }
