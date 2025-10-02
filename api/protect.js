@@ -46,6 +46,20 @@ const testCryptoJS = () => {
   }
 };
 
+// Get dynamic base URL from request
+const getDynamicBaseURL = (req) => {
+  const host = req.headers['x-forwarded-host'] || req.headers['host'];
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+  const baseURL = `${protocol}://${host}`;
+  
+  console.log('🌐 Dynamic base URL detection:');
+  console.log('   - Host:', host);
+  console.log('   - Protocol:', protocol);
+  console.log('   - Base URL:', baseURL);
+  
+  return baseURL;
+};
+
 export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -73,6 +87,9 @@ export default async function handler(req, res) {
 
   try {
     console.log(`📨 Processing protect request ${requestId}`);
+    
+    // Get dynamic base URL from request
+    const dynamicBaseURL = getDynamicBaseURL(req);
     
     // Parse request body
     let body;
@@ -119,10 +136,13 @@ export default async function handler(req, res) {
       throw new Error('CryptoJS encryption test failed - library may not be working correctly');
     }
 
-    // Initialize protector
+    // Initialize protector with dynamic base URL
     console.log('🛡️ Initializing URL protector...');
     const protector = new SophosURLProtector(getSecretKey());
-    console.log('✅ URL protector initialized');
+    
+    // Override base URL with dynamic detection
+    protector.baseURL = dynamicBaseURL;
+    console.log('✅ URL protector initialized with base URL:', protector.baseURL);
 
     // Validate and parse options
     const hours = parseInt(expiresIn);

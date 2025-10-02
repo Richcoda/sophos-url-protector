@@ -15,6 +15,20 @@ const getSecretKey = () => {
   return secretKey;
 };
 
+// Get dynamic base URL from request
+const getDynamicBaseURL = (req) => {
+  const host = req.headers['x-forwarded-host'] || req.headers['host'];
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+  const baseURL = `${protocol}://${host}`;
+  
+  console.log('🌐 Dynamic base URL detection:');
+  console.log('   - Host:', host);
+  console.log('   - Protocol:', protocol);
+  console.log('   - Base URL:', baseURL);
+  
+  return baseURL;
+};
+
 export default async function handler(req, res) {
   // Add request ID for tracking
   const requestId = Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -119,7 +133,10 @@ export default async function handler(req, res) {
 
     console.log('🛡️ Initializing URL protector for resolution...');
     const protector = new SophosURLProtector(getSecretKey());
-    console.log('✅ URL protector initialized');
+    
+    // Override base URL with dynamic detection for analytics links
+    protector.baseURL = getDynamicBaseURL(req);
+    console.log('✅ URL protector initialized with base URL:', protector.baseURL);
 
     const result = await protector.resolveProtectedURL({
       d, u, p, i, t, h, s
