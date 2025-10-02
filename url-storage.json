@@ -28,5 +28,15 @@
     "protectionMode": "m",
     "clickCount": 1,
     "isActive": true
+  },
+  "5be14d44-3f28-45eb-99bb-7e285b17be70": {
+    "id": "5be14d44-3f28-45eb-99bb-7e285b17be70",
+    "originalURL": "https://google.com",
+    "timestamp": 1759364153848,
+    "expiresAt": 1761956153848,
+    "maxClicks": null,
+    "protectionMode": "h",
+    "clickCount": 1,
+    "isActive": true
   }
 }
