@@ -1,4 +1,5 @@
 import { SophosURLProtector } from '../lib/sophos-protector.js';
+import CryptoJS from 'crypto-js'; // ADD THIS IMPORT
 
 // Get secret key from environment with comprehensive validation
 const getSecretKey = () => {
