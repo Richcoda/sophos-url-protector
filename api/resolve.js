@@ -60,7 +60,7 @@ export default async function handler(req, res) {
           <title>Secure Link - Error</title>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1">
-          <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='0%' y2='100%'><stop offset='0%' style='stop-color:%234F46E5;stop-opacity:1' /><stop offset='100%' style='stop-color:%237C3AED;stop-opacity:1' /></linearGradient></defs><path d='M50 10 L80 25 L80 40 C80 65 65 80 50 85 C35 80 20 65 20 40 L20 25 Z' fill='url(%23grad)' stroke='%233730A3' stroke-width='2'/><rect x='40' y='45' width='20' height='20' rx='3' fill='white' stroke='%231E1B4B' stroke-width='1.5'/><path d='M45 45 L45 35 C45 30 47 27 50 27 C53 27 55 30 55 35 L55 45' fill='none' stroke='%231E1B4B' stroke-width='2' stroke-linecap='round'/></svg>">
+          <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>">
           <style>
             body { 
               font-family: 'Segoe UI', system-ui, sans-serif; 
@@ -134,7 +134,7 @@ export default async function handler(req, res) {
         <title>Secure Link - Access Denied</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='0%' y2='100%'><stop offset='0%' style='stop-color:%234F46E5;stop-opacity:1' /><stop offset='100%' style='stop-color:%237C3AED;stop-opacity:1' /></linearGradient></defs><path d='M50 10 L80 25 L80 40 C80 65 65 80 50 85 C35 80 20 65 20 40 L20 25 Z' fill='url(%23grad)' stroke='%233730A3' stroke-width='2'/><rect x='40' y='45' width='20' height='20' rx='3' fill='white' stroke='%231E1B4B' stroke-width='1.5'/><path d='M45 45 L45 35 C45 30 47 27 50 27 C53 27 55 30 55 35 L55 45' fill='none' stroke='%231E1B4B' stroke-width='2' stroke-linecap='round'/></svg>">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>">
         <style>
           body { 
             font-family: 'Segoe UI', system-ui, sans-serif; 
